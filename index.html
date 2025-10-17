@@ -1,155 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Care-Pro Riyadh Accommodation</title>
-  <style>
-    body {
-      font-family: "Poppins", Arial, sans-serif;
-      margin: 20px;
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-      color: #222;
-    }
-    h1 { text-align: center; color: #004085; }
-    table {
-      border-collapse: collapse; width: 100%; margin: 15px 0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; border-radius: 6px;
-    }
-    th, td { border: 1px solid #ddd; padding: 8px 10px; font-size: 14px; }
-    th { background: #004085; color: #fff; text-transform: uppercase; }
-    tr:nth-child(even) { background: #f8f9fa; }
-    tr:hover { background: #e2e6ea; }
-    .form { background: #fff; padding: 10px; border-radius: 8px; margin-top: 10px; }
-    input, select, button {
-      margin: 5px; padding: 6px 10px; border: 1px solid #bbb; border-radius: 4px;
-      font-size: 13px;
-    }
-    button { background: #004085; color: white; cursor: pointer; }
-    button:hover { background: #0056b3; }
-    .hidden { display: none; }
-  </style>
-</head>
+<html>
 <body>
-  <h1>🏠 CARE-PRO RIYADH ACCOMMODATION</h1>
-
-  <div id="loginBox">
-    <input type="password" id="adminPw" placeholder="Enter Admin Password">
-    <button onclick="login()">Login</button>
-  </div>
-  <div id="adminBox" class="hidden">
-    <button onclick="logout()">Logout</button>
-  </div>
-
-  <div id="editor" class="form hidden">
-    <h3>Admin Panel</h3>
-    <label>IQAMA: <input id="f_iq"></label>
-    <label>Name: <input id="f_name"></label>
-    <label>Camp: <input id="f_camp"></label>
-    <label>Company: <input id="f_company"></label>
-    <label>Gender: <input id="f_gender"></label>
-    <label>Nationality: <input id="f_nationality"></label>
-    <label>Sponsor: <input id="f_sponsor"></label>
-    <label>Room: <input id="f_room"></label>
-    <br>
-    <button onclick="addWorker()">Add Worker</button>
-    <button onclick="deleteWorkerPrompt()">Delete by IQAMA</button>
-    <p id="msg" style="color:green;font-weight:bold;"></p>
-  </div>
-
-  <h3>Workers</h3>
-  <div id="tableWrap"></div>
+  <h3>Test Add Worker</h3>
+  <input id="iq" placeholder="IQ">
+  <input id="name" placeholder="Name">
+  <input id="camp" placeholder="Camp">
+  <button onclick="add()">Add</button>
+  <p id="status"></p>
 
   <script>
-    const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz-mpv96-DorjjVgha2OcjHHNRZOkYyvUmYM324D9UdScCEXS-oqvU-OQIidEDxTWOD/exec";
-    let workers = [];
-    let isAdmin = false;
+    const API = "YOUR_NEW_DEPLOYED_URL_HERE";
 
-    async function loadData() {
-      try {
-        const res = await fetch(SHEET_API_URL);
-        workers = await res.json();
-        renderTable();
-      } catch (e) {
-        console.error("Error loading data:", e);
-      }
-    }
-
-    async function saveData() {
-      try {
-        await fetch(SHEET_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(workers)
-        });
-      } catch (e) {
-        console.error("Save failed:", e);
-      }
-    }
-
-    function renderTable() {
-      if (!workers.length) {
-        document.getElementById("tableWrap").innerHTML = "<p>No data yet.</p>";
-        return;
-      }
-      let html = "<table><tr><th>#</th><th>IQ</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>";
-      workers.forEach((w, i) => {
-        html += `<tr><td>${i+1}</td><td>${w.iq}</td><td>${w.name}</td><td>${w.camp}</td><td>${w.company}</td>
-                 <td>${w.gender}</td><td>${w.nationality}</td><td>${w.sponsor}</td><td>${w.room}</td></tr>`;
-      });
-      html += "</table>";
-      document.getElementById("tableWrap").innerHTML = html;
-    }
-
-    function addWorker() {
-      const w = {
-        iq: f_iq.value.trim(),
-        name: f_name.value.trim(),
-        camp: f_camp.value.trim(),
-        company: f_company.value.trim(),
-        gender: f_gender.value.trim(),
-        nationality: f_nationality.value.trim(),
-        sponsor: f_sponsor.value.trim(),
-        room: f_room.value.trim()
+    async function add() {
+      const data = {
+        iq: document.getElementById("iq").value,
+        name: document.getElementById("name").value,
+        camp: document.getElementById("camp").value,
+        company: "",
+        gender: "",
+        nationality: "",
+        sponsor: "",
+        room: ""
       };
-      if (!w.iq || !w.name) {
-        alert("IQ and Name required!");
-        return;
-      }
-      workers.push(w);
-      saveData();
-      renderTable();
-      msg.textContent = "✅ Worker added!";
+      const res = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      document.getElementById("status").innerText = await res.text();
     }
-
-    function deleteWorkerPrompt() {
-      const iq = prompt("Enter IQAMA to delete:");
-      const idx = workers.findIndex(w => w.iq === iq);
-      if (idx === -1) return alert("Not found!");
-      workers.splice(idx, 1);
-      saveData();
-      renderTable();
-      alert("🗑️ Worker deleted!");
-    }
-
-    function login() {
-      const pw = document.getElementById("adminPw").value;
-      if (pw === "1234") {
-        isAdmin = true;
-        document.getElementById("editor").classList.remove("hidden");
-        document.getElementById("loginBox").classList.add("hidden");
-        document.getElementById("adminBox").classList.remove("hidden");
-      } else alert("Wrong password!");
-    }
-
-    function logout() {
-      isAdmin = false;
-      document.getElementById("editor").classList.add("hidden");
-      document.getElementById("loginBox").classList.remove("hidden");
-      document.getElementById("adminBox").classList.add("hidden");
-    }
-
-    loadData();
   </script>
 </body>
 </html>
