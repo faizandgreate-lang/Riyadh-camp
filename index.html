@@ -5,53 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Care-Pro Riyadh Accommodation</title>
 <style>
-body { font-family:"Poppins", Arial; background:#e6f0ff; color:#004085; margin:20px; }
-h1,h2,h3,h4{ color:#004085; }
-table{ border-collapse:collapse; width:100%; margin:15px 0; background:#fff; border-radius:6px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-th,td{ border:1px solid #ddd; padding:8px 10px; text-align:left; }
-th{ background:#004085; color:#fff; text-transform:uppercase;}
-tr:nth-child(even){ background:#cce0ff; }
-tr:hover{ background:#b3d1ff; }
-input, select, button{ padding:5px; margin:3px; border-radius:4px; }
-button{ cursor:pointer; background:#004085; color:#fff; border:none; }
-button:hover{ background:#0056b3; }
+body { font-family:"Poppins", Arial, sans-serif; margin:20px; background:linear-gradient(135deg,#cce5ff,#e6f2ff); color:#004085; }
+h1,h2,h3,h4{color:#004085;}
+h1{ text-align:center; font-size:28px; margin-bottom:15px;}
+table{border-collapse:collapse;width:100%;margin:15px 0;box-shadow:0 2px 6px rgba(0,0,0,0.1); background:#fff; border-radius:6px; overflow:hidden;}
+th,td{border:1px solid #ddd; padding:8px 10px; text-align:left; font-size:14px;}
+th{background:#004085;color:#fff;}
+tr:nth-child(even){background:#e6f2ff;}
+tr:hover{background:#d1e0ff;}
 .form{border:1px solid #ccc; padding:15px; background:#fefefe; border-radius:8px; margin-top:10px;}
-.hidden{ display:none; }
-.footer{text-align:center;margin-top:30px;color:#004085;}
+.form input, .form select{margin:5px; padding:6px 10px; border-radius:4px;}
+.form button{background:#004085; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; margin:5px;}
+.form button:hover{background:#0056b3;}
+.footer{text-align:center;font-size:13px;color:#555;margin-top:40px;}
+@media(max-width:768px){table,th,td{font-size:12px;} .form input,.form select,.form button{width:100%;margin-top:5px;}}
 </style>
 </head>
 <body>
-
 <h1>🏠 CARE-PRO RIYADH ACCOMMODATION</h1>
 
 <div>
-<span id="loginBox">
-  <input type="password" id="adminPw" placeholder="Admin Password">
+  <input type="password" id="adminPw" placeholder="Enter Admin Password">
   <button onclick="login()">Login</button>
-</span>
-<span id="adminBox" class="hidden">
-  <button onclick="logout()">Logout</button>
-</span>
+  <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
 </div>
 
-<div id="editor" class="form hidden">
-<h3>🔧 ADMIN PANEL</h3>
+<div id="editor" class="form" style="display:none;">
+<h4>🔧 ADMIN PANEL</h4>
 <label>IQAMA: <input id="f_iq"></label>
 <label>Name: <input id="f_name"></label>
-<label>Camp: <input id="f_camp" placeholder="CP1 / CP2 / CP3"></label>
+<label>Camp: <input id="f_camp"></label>
 <label>Company: <input id="f_company"></label>
 <label>Gender: <input id="f_gender"></label>
 <label>Nationality: <input id="f_nationality"></label>
 <label>Sponsor: <input id="f_sponsor"></label>
-<label>Room: <input id="f_room"></label>
-<br>
+<label>Room: <input id="f_room"></label><br>
 <button onclick="addWorker()">Add Worker</button>
-<button onclick="deleteWorker()">Delete Worker</button>
-<h4>📤 Upload CSV</h4>
-<input type="file" id="csvFile">
-<button onclick="uploadCSV()">Upload CSV</button>
-<div id="msg" style="color:green;margin-top:8px;"></div>
+<button onclick="deleteWorker()">Delete Worker</button><br>
+<h4>📤 Import CSV</h4>
+<input type="file" id="csvFile" accept=".csv">
+<button onclick="importCSV()">Upload CSV</button>
 </div>
+
+<h2>🏢 Workers Table & Totals</h2>
+<div id="tableWrap"></div>
 
 <h2>🏢 Client / Company Summary</h2>
 <div id="clientSummary"></div>
@@ -59,134 +56,102 @@ button:hover{ background:#0056b3; }
 <h2>🏘️ Camp Summary</h2>
 <div id="campSummary"></div>
 
-<h2>👷 Worker Details</h2>
-<div id="workerTable"></div>
-
-<div class="footer">Made with ❤️ by Faizan Khan</div>
+<div class="footer">Made with ❤️ by <span>Faizan Khan</span></div>
 
 <script>
-const WEB_APP_URL='https://script.google.com/macros/s/AKfycbyIjmcpXAOMaRguvMkkAJbNbIU5skOA-7G8yW901E1l-09d9wSNlWUBVFs-0hP5C3097g/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz2hWGRihuV9NBcIN7g0VYWG_M-Im-V7Gf_-rKJfZ6Na6Uks70kqAE8Q1EUpG3cdcMnNg/exec';
+
 let isAdmin=false;
 
 function login(){
   if(document.getElementById('adminPw').value==='1234'){
-    isAdmin=true;
-    document.getElementById('editor').classList.remove('hidden');
-    document.getElementById('loginBox').classList.add('hidden');
-    document.getElementById('adminBox').classList.remove('hidden');
-    loadData();
-  } else alert('❌ Wrong password');
+    isAdmin=true; document.getElementById('editor').style.display='block';
+    document.getElementById('logoutBtn').style.display='inline-block';
+    fetchData();
+  } else alert('❌ Wrong password!');
 }
 
-function logout(){
-  isAdmin=false;
-  document.getElementById('editor').classList.add('hidden');
-  document.getElementById('loginBox').classList.remove('hidden');
-  document.getElementById('adminBox').classList.add('hidden');
-  loadData();
+function logout(){ isAdmin=false; document.getElementById('editor').style.display='none'; document.getElementById('logoutBtn').style.display='none'; }
+
+function fetchData(){
+  fetch(WEB_APP_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'getData'})})
+  .then(res=>res.json())
+  .then(resp=>{
+    if(resp.status==='success'){
+      renderTable(resp.workers);
+      renderClientSummary(resp.workers);
+      renderCampSummary(resp.workers);
+    } else alert('❌ '+resp.message);
+  }).catch(err=>alert('Fetch error: '+err));
 }
 
-async function fetchData(action,payload={}){
-  const res=await fetch(WEB_APP_URL,{
-    method:'POST',
-    body: JSON.stringify({...payload, action}),
-    headers:{'Content-Type':'application/json'}
-  });
-  return await res.json();
-}
-
-async function loadData(){
-  const data=await fetchData('getData');
-  if(data.status==='success'){
-    renderWorkerTable(data.workers);
-    renderClientSummary(data.workers);
-    renderCampSummary(data.workers);
-  }
-}
-
-async function addWorker(){
-  const w={
-    iq:f_iq.value, name:f_name.value, camp:f_camp.value, company:f_company.value,
-    gender:f_gender.value, nationality:f_nationality.value, sponsor:f_sponsor.value, room:f_room.value
+function addWorker(){
+  const data={action:'addWorker',
+    iq:f_iq.value.trim(), name:f_name.value.trim(), camp:f_camp.value.trim(),
+    company:f_company.value.trim(), gender:f_gender.value.trim(),
+    nationality:f_nationality.value.trim(), sponsor:f_sponsor.value.trim(),
+    room:f_room.value.trim()
   };
-  if(!w.iq||!w.name) return alert('IQAMA and Name required');
-  const res=await fetchData('addWorker', w);
-  if(res.status==='success'){alert('✅ Worker added'); loadData();}
+  if(!data.iq||!data.name){alert('IQAMA and Name required'); return;}
+  fetch(WEB_APP_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)})
+  .then(r=>r.json()).then(resp=>{if(resp.status==='success'){alert('✅ Worker added'); fetchData();}else alert(resp.message);})
+  .catch(err=>alert('Fetch error: '+err));
 }
 
-async function deleteWorker(){
-  const iq=prompt('Enter IQAMA to delete:');
-  if(!iq) return;
-  const res=await fetchData('deleteWorker',{iq});
-  if(res.status==='success'){alert('🗑️ Worker deleted'); loadData();}
-  else alert('❌ Not found');
+function deleteWorker(){
+  const iq=prompt('Enter IQAMA to delete:'); if(!iq) return;
+  fetch(WEB_APP_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'deleteWorker',iq})})
+  .then(r=>r.json()).then(resp=>{if(resp.status==='success'){alert('✅ Worker deleted'); fetchData();}else alert('❌ Worker not found');})
+  .catch(err=>alert('Fetch error: '+err));
 }
 
-function renderWorkerTable(workers){
+function importCSV(){
+  const file=document.getElementById('csvFile').files[0]; if(!file){alert('Select CSV'); return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    fetch(WEB_APP_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'importCSV',csv:e.target.result})})
+    .then(r=>r.json()).then(resp=>{if(resp.status==='success'){alert('✅ CSV imported'); fetchData();}else alert(resp.message);})
+    .catch(err=>alert('Fetch error: '+err));
+  }; reader.readAsText(file);
+}
+
+function renderTable(workers){
   let html='<table><tr><th>#</th><th>IQAMA</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>';
-  workers.forEach((w,i)=>{
-    html+=`<tr><td>${i+1}</td><td>${w.iq}</td><td>${w.name}</td><td>${w.camp}</td><td>${w.company}</td><td>${w.gender}</td><td>${w.nationality}</td><td>${w.sponsor}</td><td>${w.room}</td></tr>`;
-  });
-  html+='</table>';
-  document.getElementById('workerTable').innerHTML=html;
+  workers.forEach((w,i)=>{html+='<tr><td>'+(i+1)+'</td><td>'+w.iq+'</td><td>'+w.name+'</td><td>'+w.camp+'</td><td>'+w.company+'</td><td>'+w.gender+'</td><td>'+w.nationality+'</td><td>'+w.sponsor+'</td><td>'+w.room+'</td></tr>';});
+  html+='</table>'; document.getElementById('tableWrap').innerHTML=html;
 }
 
 function renderClientSummary(workers){
-  const camps=['CP1','CP2','CP3'];
-  let map={};
+  let summary={};
   workers.forEach(w=>{
-    map[w.company]=map[w.company]||{};
-    map[w.company][w.camp]=(map[w.company][w.camp]||0)+1;
+    if(!summary[w.company]) summary[w.company]={'CP 1':0,'CP 2':0,'CP 3':0};
+    if(w.camp==='CP 1') summary[w.company]['CP 1']++;
+    if(w.camp==='CP 2') summary[w.company]['CP 2']++;
+    if(w.camp==='CP 3') summary[w.company]['CP 3']++;
   });
-  let html='<table><tr><th>Client / Company</th>';
-  camps.forEach(c=>html+=`<th>${c}</th>`);
-  html+='<th>Total</th></tr>';
-  let totalSum=0;
-  for(let comp in map){
-    let sum=0;
-    html+=`<tr><td>${comp}</td>`;
-    camps.forEach(c=>{
-      const val=map[comp][c]||0;
-      sum+=val;
-      html+=`<td>${val}</td>`;
-    });
-    html+=`<td>${sum}</td></tr>`;
-    totalSum+=sum;
+  let html='<table><tr><th>Client / Company</th><th>CP 1</th><th>CP 2</th><th>CP 3</th><th>Total</th></tr>';
+  let totals={'CP 1':0,'CP 2':0,'CP 3':0,'Total':0};
+  for(let c in summary){
+    let t=summary[c]['CP 1']+summary[c]['CP 2']+summary[c]['CP 3'];
+    html+='<tr><td>'+c+'</td><td>'+summary[c]['CP 1']+'</td><td>'+summary[c]['CP 2']+'</td><td>'+summary[c]['CP 3']+'</td><td>'+t+'</td></tr>';
+    totals['CP 1']+=summary[c]['CP 1']; totals['CP 2']+=summary[c]['CP 2']; totals['CP 3']+=summary[c]['CP 3']; totals['Total']+=t;
   }
-  html+=`<tr style="font-weight:bold;"><td>Total</td>`;
-  camps.forEach(c=>html+=`<td>-</td>`);
-  html+=`<td>${totalSum}</td></tr></table>`;
+  html+='<tr><th>TOTAL</th><th>'+totals['CP 1']+'</th><th>'+totals['CP 2']+'</th><th>'+totals['CP 3']+'</th><th>'+totals['Total']+'</th></tr></table>';
   document.getElementById('clientSummary').innerHTML=html;
 }
 
 function renderCampSummary(workers){
-  const camps=['CP1','CP2','CP3'];
-  let html='<table><tr><th>Camp</th><th>Total Workers</th><th>Male</th><th>Female</th></tr>';
-  camps.forEach(c=>{
-    const w=workers.filter(x=>x.camp===c);
-    const male=w.filter(x=>x.gender.toLowerCase().startsWith('m')).length;
-    const female=w.filter(x=>x.gender.toLowerCase().startsWith('f')).length;
-    html+=`<tr><td>${c}</td><td>${w.length}</td><td>${male}</td><td>${female}</td></tr>`;
-  });
-  html+='</table>';
+  let camps={'CP 1':0,'CP 2':0,'CP 3':0};
+  workers.forEach(w=>{if(camps[w.camp]!==undefined) camps[w.camp]++;});
+  let html='<table><tr><th>Camp</th><th>Workers Count</th></tr>';
+  for(let c in camps) html+='<tr><td>'+c+'</td><td>'+camps[c]+'</td></tr>';
+  html+='<tr><th>TOTAL</th><th>'+(camps['CP 1']+camps['CP 2']+camps['CP 3'])+'</th></tr></table>';
   document.getElementById('campSummary').innerHTML=html;
 }
 
-function uploadCSV(){
-  const file=document.getElementById('csvFile').files[0];
-  if(!file) return alert('Select CSV');
-  const reader=new FileReader();
-  reader.onload=function(e){
-    fetchData('importCSV',{csv:e.target.result}).then(res=>{
-      if(res.status==='success'){alert('✅ CSV imported'); loadData();}
-      else alert('❌ Error');
-    });
-  };
-  reader.readAsText(file);
-}
+// Auto fetch every 30s
+setInterval(()=>{ if(isAdmin) fetchData(); },30000);
 
-loadData();
 </script>
-
 </body>
 </html>
