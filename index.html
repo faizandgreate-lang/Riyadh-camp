@@ -5,262 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Care-Pro Riyadh Accommodation</title>
   <style>
-    /* GENERAL STYLES */
     body {
       font-family: "Poppins", Arial, sans-serif;
       margin: 20px;
       background: linear-gradient(135deg, #f8f9fa, #e9ecef);
       color: #222;
-      animation: bgmove 10s ease-in-out infinite alternate;
     }
-    @keyframes bgmove {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
-    h1, h2, h3, h4 {
-      color: #004085;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 15px;
-      font-size: 28px;
-      letter-spacing: 1px;
-    }
+    h1 { text-align: center; color: #004085; }
     table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 15px 0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      background: #fff;
-      border-radius: 6px;
-      overflow: hidden;
+      border-collapse: collapse; width: 100%; margin: 15px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; border-radius: 6px;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px 10px;
-      text-align: left;
-      font-size: 14px;
-    }
-    th {
-      background: #004085;
-      color: #fff;
-      text-transform: uppercase;
-    }
-    tr:nth-child(even) {
-      background: #f8f9fa;
-    }
-    tr:hover {
-      background: #e2e6ea;
-    }
-    .form {
-      border: 1px solid #ccc;
-      padding: 15px;
-      background: #fefefe;
-      border-radius: 8px;
-      margin-top: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .form input {
-      margin: 5px;
-      padding: 6px 10px;
-      border: 1px solid #bbb;
-      border-radius: 4px;
+    th, td { border: 1px solid #ddd; padding: 8px 10px; font-size: 14px; }
+    th { background: #004085; color: #fff; text-transform: uppercase; }
+    tr:nth-child(even) { background: #f8f9fa; }
+    tr:hover { background: #e2e6ea; }
+    .form { background: #fff; padding: 10px; border-radius: 8px; margin-top: 10px; }
+    input, select, button {
+      margin: 5px; padding: 6px 10px; border: 1px solid #bbb; border-radius: 4px;
       font-size: 13px;
     }
-    .form button {
-      background: #004085;
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin: 5px;
-    }
-    .form button:hover {
-      background: #0056b3;
-    }
-    .hidden {
-      display: none;
-    }
-    .footer {
-      text-align: center;
-      font-size: 13px;
-      color: #555;
-      margin-top: 40px;
-      font-style: italic;
-    }
-    .footer span {
-      color: #004085;
-      font-weight: bold;
-    }
-    input[type=number] {
-      width: 80px;
-    }
-    .search-box {
-      background: #e9f2ff;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #cce5ff;
-      margin-top: 10px;
-    }
-    select {
-      padding: 6px 10px;
-      border: 1px solid #aaa;
-      border-radius: 4px;
-    }
-    button {
-      transition: 0.3s;
-    }
-    button:active {
-      transform: scale(0.96);
-    }
-    @media (max-width: 768px) {
-      table, th, td {
-        font-size: 12px;
-      }
-      .form input, select, button {
-        width: 100%;
-        margin-top: 5px;
-      }
-    }
+    button { background: #004085; color: white; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-
   <h1>🏠 CARE-PRO RIYADH ACCOMMODATION</h1>
 
-  <div>
-    <span id="loginBox">
-      <input type="password" id="adminPw" placeholder="Enter Admin Password">
-      <button onclick="login()">Login</button>
-    </span>
-    <span id="adminBox" class="hidden">
-      <button onclick="logout()">Logout</button>
-    </span>
+  <div id="loginBox">
+    <input type="password" id="adminPw" placeholder="Enter Admin Password">
+    <button onclick="login()">Login</button>
+  </div>
+  <div id="adminBox" class="hidden">
+    <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- ADMIN PANEL -->
   <div id="editor" class="form hidden">
-    <h4>🔧 ADMIN PANEL</h4>
-
+    <h3>Admin Panel</h3>
     <label>IQAMA: <input id="f_iq"></label>
     <label>Name: <input id="f_name"></label>
-    <label>Camp: <input id="f_camp" placeholder="CP 1 / CP 2 / CP 3"></label>
+    <label>Camp: <input id="f_camp"></label>
     <label>Company: <input id="f_company"></label>
     <label>Gender: <input id="f_gender"></label>
     <label>Nationality: <input id="f_nationality"></label>
     <label>Sponsor: <input id="f_sponsor"></label>
-    <label>Room No: <input id="f_room"></label>
+    <label>Room: <input id="f_room"></label>
     <br>
     <button onclick="addWorker()">Add Worker</button>
     <button onclick="deleteWorkerPrompt()">Delete by IQAMA</button>
-    <div id="msg" style="color:green; margin-top:8px; font-weight:600;"></div>
-
-    <h4>🏕️ Manage Camps</h4>
-    <input id="newCampName" placeholder="Enter Camp Name">
-    <button onclick="addNewCamp()">Add Camp</button>
-    <button onclick="deleteCamp()">Delete Camp</button>
-
-    <h4>📤 Export / 📥 Import Workers</h4>
-    <button onclick="exportCSV()">Export Workers CSV</button><br><br>
-    <input type="file" id="csvFile" accept=".csv">
-    <button onclick="importCSV()">Import CSV</button>
-    <p style="font-size:12px; color:gray;">CSV Format: iq,name,camp,company,gender,nationality,sponsor,room</p>
+    <p id="msg" style="color:green;font-weight:bold;"></p>
   </div>
 
-  <!-- CAMP SELECTION -->
-  <h2>🏕️ Select Camp</h2>
-  <div style="margin:10px 0;">
-    <label>Camp:
-      <select id="campSelect" onchange="showSelectedCamp()"></select>
-    </label>
-    <button onclick="showSelectedCamp()">Show Camp</button>
-  </div>
-
-  <!-- SEARCH -->
-  <div class="search-box">
-    <h3>🔍 Search Worker by IQAMA</h3>
-    <input type="text" id="searchIqama" placeholder="Enter IQAMA Number">
-    <button onclick="searchByIqama()">Search</button>
-    <div id="searchResult" style="margin-top:10px;"></div>
-  </div>
-
-  <!-- SUMMARY SECTIONS -->
-  <h2>🏢 Client / Company Summary</h2>
-  <div id="clientSummary"></div>
-
-  <h2>🏘️ Camp Summary</h2>
-  <div id="campSummary"></div>
-
-  <h2>👷 Worker Details</h2>
+  <h3>Workers</h3>
   <div id="tableWrap"></div>
 
-  <div class="footer">Made with ❤️ by <span>Faizan Khan</span></div>
-
   <script>
-    const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbx9EA6DYosNAID-sIL-yAH4duzFT5n2hGFtOrMhGj6FnmY4yJjZUfurOiozUiMtCC7n/exec';
-
-    let isAdmin = false;
+    const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz-mpv96-DorjjVgha2OcjHHNRZOkYyvUmYM324D9UdScCEXS-oqvU-OQIidEDxTWOD/exec";
     let workers = [];
-    let camps = [];
-    let campData = {};
+    let isAdmin = false;
 
     async function loadData() {
       try {
-        const resp = await fetch(SHEET_API_URL);
-        workers = await resp.json();
-        // After loading workers, derive camps & campData if not set
-        camps = [...new Set(workers.map(w => w.camp))];
-        camps.forEach(c => {
-          if (!campData[c]) campData[c] = { beds:0, rooms:0 };
-        });
-        renderAll();
-      } catch (err) {
-        console.error("Failed to load from sheet:", err);
-        // fallback localStorage
-        workers = JSON.parse(localStorage.getItem('workers')||'[]');
-        camps = JSON.parse(localStorage.getItem('camps')||'[]');
-        campData = JSON.parse(localStorage.getItem('campData')||'{}');
-        renderAll();
+        const res = await fetch(SHEET_API_URL);
+        workers = await res.json();
+        renderTable();
+      } catch (e) {
+        console.error("Error loading data:", e);
       }
     }
 
     async function saveData() {
       try {
         await fetch(SHEET_API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(workers)
         });
-      } catch (err) {
-        console.error("Failed to save to sheet:", err);
-        // fallback localStorage
-        localStorage.setItem('workers', JSON.stringify(workers));
-        localStorage.setItem('camps', JSON.stringify(camps));
-        localStorage.setItem('campData', JSON.stringify(campData));
+      } catch (e) {
+        console.error("Save failed:", e);
       }
     }
 
-    function login() {
-      const pw = document.getElementById('adminPw').value;
-      if (pw === '1234') {
-        isAdmin = true;
-        document.getElementById('editor').classList.remove('hidden');
-        document.getElementById('loginBox').classList.add('hidden');
-        document.getElementById('adminBox').classList.remove('hidden');
-        document.getElementById('msg').innerText = 'Admin mode enabled';
-        renderAll();
-      } else {
-        alert('❌ Wrong password!');
+    function renderTable() {
+      if (!workers.length) {
+        document.getElementById("tableWrap").innerHTML = "<p>No data yet.</p>";
+        return;
       }
-    }
-
-    function logout() {
-      isAdmin = false;
-      document.getElementById('editor').classList.add('hidden');
-      document.getElementById('loginBox').classList.remove('hidden');
-      document.getElementById('adminBox').classList.add('hidden');
-      renderAll();
+      let html = "<table><tr><th>#</th><th>IQ</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>";
+      workers.forEach((w, i) => {
+        html += `<tr><td>${i+1}</td><td>${w.iq}</td><td>${w.name}</td><td>${w.camp}</td><td>${w.company}</td>
+                 <td>${w.gender}</td><td>${w.nationality}</td><td>${w.sponsor}</td><td>${w.room}</td></tr>`;
+      });
+      html += "</table>";
+      document.getElementById("tableWrap").innerHTML = html;
     }
 
     function addWorker() {
@@ -275,223 +113,42 @@
         room: f_room.value.trim()
       };
       if (!w.iq || !w.name) {
-        alert("IQAMA and Name required!");
+        alert("IQ and Name required!");
         return;
       }
       workers.push(w);
-      if (!camps.includes(w.camp)) camps.push(w.camp);
       saveData();
-      renderAll();
-      msg.innerText = "✅ Worker added!";
+      renderTable();
+      msg.textContent = "✅ Worker added!";
     }
 
     function deleteWorkerPrompt() {
       const iq = prompt("Enter IQAMA to delete:");
-      if (!iq) return;
       const idx = workers.findIndex(w => w.iq === iq);
-      if (idx >= 0) {
-        workers.splice(idx, 1);
-        saveData();
-        renderAll();
-        alert("🗑️ Worker deleted!");
-      } else {
-        alert("❌ IQAMA not found!");
-      }
-    }
-
-    function addNewCamp() {
-      const name = newCampName.value.trim();
-      if (name && !camps.includes(name)) {
-        camps.push(name);
-        campData[name] = { beds:0, rooms:0 };
-        saveData();
-        updateCampDropdown();
-        alert(`✅ Camp "${name}" added.`);
-        newCampName.value = '';
-      } else {
-        alert('⚠️ Invalid or duplicate camp name.');
-      }
-    }
-
-    function deleteCamp() {
-      const campToDelete = newCampName.value.trim();
-      if (!campToDelete) {
-        alert("Enter camp name to delete.");
-        return;
-      }
-      if (!camps.includes(campToDelete)) {
-        alert("Camp not found.");
-        return;
-      }
-      if (!confirm(`Delete camp "${campToDelete}" and its workers?`)) return;
-      camps = camps.filter(c => c !== campToDelete);
-      delete campData[campToDelete];
-      workers = workers.filter(w => w.camp !== campToDelete);
+      if (idx === -1) return alert("Not found!");
+      workers.splice(idx, 1);
       saveData();
-      updateCampDropdown();
-      renderAll();
-      alert(`🗑️ Camp "${campToDelete}" deleted.`);
-    }
-
-    function updateCampDropdown() {
-      const sel = campSelect;
-      sel.innerHTML = '';
-      camps.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.innerText = c;
-        sel.appendChild(opt);
-      });
-    }
-
-    function showSelectedCamp() {
-      renderTable(campSelect.value);
-    }
-
-    function renderTable(campFilter = '') {
-      let html = `<table><tr><th>#</th><th>IQAMA</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>`;
-      let count = 1;
-      workers.forEach(w => {
-        if (!campFilter || w.camp === campFilter) {
-          html += `<tr>
-            <td>${count++}</td>
-            <td>${w.iq}</td>
-            <td>${w.name}</td>
-            <td>${w.camp}</td>
-            <td>${w.company}</td>
-            <td>${w.gender}</td>
-            <td>${w.nationality}</td>
-            <td>${w.sponsor}</td>
-            <td>${w.room}</td>
-          </tr>`;
-        }
-      });
-      html += `</table>`;
-      tableWrap.innerHTML = html;
-    }
-
-    function searchByIqama() {
-      const iq = searchIqama.value.trim();
-      if (!iq) {
-        searchResult.innerHTML = "<p style='color:red;'>Please enter IQAMA number</p>";
-        return;
-      }
-      const w = workers.find(x => x.iq === iq);
-      if (!w) {
-        searchResult.innerHTML = "<p style='color:red;'>No worker found</p>";
-      } else {
-        searchResult.innerHTML = `<table><tr><th>IQAMA</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>
-          <tr><td>${w.iq}</td><td>${w.name}</td><td>${w.camp}</td><td>${w.company}</td><td>${w.gender}</td><td>${w.nationality}</td><td>${w.sponsor}</td><td>${w.room}</td></tr></table>`;
-      }
-    }
-
-    function renderClientSummary() {
-      let map = {};
-      let total = 0;
-      workers.forEach(w => {
-        if (!map[w.company]) map[w.company] = {};
-        map[w.company][w.camp] = (map[w.company][w.camp] || 0) + 1;
-      });
-      let html = '<table><tr><th>Company</th>';
-      camps.forEach(c => html += `<th>${c}</th>`);
-      html += '<th>Total</th></tr>';
-      for (const comp in map) {
-        let sum = 0;
-        html += `<tr><td>${comp}</td>`;
-        camps.forEach(c => {
-          const val = map[comp][c] || 0;
-          sum += val;
-          html += `<td>${val}</td>`;
-        });
-        html += `<td>${sum}</td></tr>`;
-        total += sum;
-      }
-      html += `<tr style="font-weight:bold;background:#cfe2ff;"><td>Total</td><td colspan="${camps.length}"></td><td>${total}</td></tr></table>`;
-      clientSummary.innerHTML = html;
-    }
-
-    function renderCampSummary() {
-      let html = '<table><tr><th>Camp</th><th>Rooms</th><th>Total Beds</th><th>Available Beds</th><th>Male</th><th>Female</th><th>Total</th></tr>';
-      let totalWorkers = 0;
-      camps.forEach(c => {
-        const total = workers.filter(w => w.camp === c).length;
-        const male = workers.filter(w => w.camp === c && w.gender.toLowerCase().startsWith('m')).length;
-        const female = workers.filter(w => w.camp === c && w.gender.toLowerCase().startsWith('f')).length;
-        const data = campData[c] || { beds:0, rooms:0 };
-        const avail = Math.max(data.beds - total, 0);
-        totalWorkers += total;
-        html += `<tr>
-          <td>${c}</td>
-          <td>${isAdmin ? `<input type='number' value='${data.rooms}' onchange='updateCampRooms("${c}",this.value)'>` : data.rooms}</td>
-          <td>${isAdmin ? `<input type='number' value='${data.beds}' onchange='updateCampBeds("${c}",this.value)'>` : data.beds}</td>
-          <td>${avail}</td><td>${male}</td><td>${female}</td><td>${total}</td>
-        </tr>`;
-      });
-      html += `<tr style="font-weight:bold;background:#cfe2ff;"><td colspan="6">Total Workers</td><td>${totalWorkers}</td></tr></table>`;
-      campSummary.innerHTML = html;
-    }
-
-    function updateCampBeds(c, v) {
-      campData[c] = campData[c] || { beds: 0, rooms: 0 };
-      campData[c].beds = parseInt(v) || 0;
-      saveData();
-      renderCampSummary();
-    }
-
-    function updateCampRooms(c, v) {
-      campData[c] = campData[c] || { beds: 0, rooms: 0 };
-      campData[c].rooms = parseInt(v) || 0;
-      saveData();
-      renderCampSummary();
-    }
-
-    function exportCSV() {
-      const h = ['iq','name','camp','company','gender','nationality','sponsor','room'];
-      let csv = h.join(',') + '\n';
-      workers.forEach(w => {
-        csv += h.map(k => `"${w[k] || ''}"`).join(',') + '\n';
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'carepro_workers.csv';
-      link.click();
-    }
-
-    function importCSV() {
-      const file = csvFile.files[0];
-      if (!file) {
-        alert("Select a CSV file.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = e => {
-        const lines = e.target.result.split('\n').filter(l => l.trim());
-        const h = lines[0].split(',');
-        const arr = lines.slice(1).map(l => {
-          const v = l.split(',');
-          const obj = {};
-          h.forEach((x, i) => obj[x.trim()] = (v[i] || '').replace(/"/g, '').trim());
-          return obj;
-        });
-        if (confirm(`Import ${arr.length} workers?`)) {
-          workers = workers.concat(arr);
-          saveData();
-          renderAll();
-          alert('Imported successfully!');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function renderAll() {
-      updateCampDropdown();
       renderTable();
-      renderClientSummary();
-      renderCampSummary();
+      alert("🗑️ Worker deleted!");
     }
 
-    // Initial load
+    function login() {
+      const pw = document.getElementById("adminPw").value;
+      if (pw === "1234") {
+        isAdmin = true;
+        document.getElementById("editor").classList.remove("hidden");
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("adminBox").classList.remove("hidden");
+      } else alert("Wrong password!");
+    }
+
+    function logout() {
+      isAdmin = false;
+      document.getElementById("editor").classList.add("hidden");
+      document.getElementById("loginBox").classList.remove("hidden");
+      document.getElementById("adminBox").classList.add("hidden");
+    }
+
     loadData();
   </script>
 </body>
