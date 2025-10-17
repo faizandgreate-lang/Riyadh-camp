@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care-Pro Riyadh Accommodation</title>
+<style>
+body { font-family:"Poppins", Arial; background:#e6f0ff; color:#004085; margin:20px; }
+h1,h2,h3,h4{ color:#004085; }
+table{ border-collapse:collapse; width:100%; margin:15px 0; background:#fff; border-radius:6px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+th,td{ border:1px solid #ddd; padding:8px 10px; text-align:left; }
+th{ background:#004085; color:#fff; text-transform:uppercase;}
+tr:nth-child(even){ background:#cce0ff; }
+tr:hover{ background:#b3d1ff; }
+input, select, button{ padding:5px; margin:3px; border-radius:4px; }
+button{ cursor:pointer; background:#004085; color:#fff; border:none; }
+button:hover{ background:#0056b3; }
+.form{border:1px solid #ccc; padding:15px; background:#fefefe; border-radius:8px; margin-top:10px;}
+.hidden{ display:none; }
+.footer{text-align:center;margin-top:30px;color:#004085;}
+</style>
+</head>
+<body>
+
+<h1>🏠 CARE-PRO RIYADH ACCOMMODATION</h1>
+
+<div>
+<span id="loginBox">
+  <input type="password" id="adminPw" placeholder="Admin Password">
+  <button onclick="login()">Login</button>
+</span>
+<span id="adminBox" class="hidden">
+  <button onclick="logout()">Logout</button>
+</span>
+</div>
+
+<div id="editor" class="form hidden">
+<h3>🔧 ADMIN PANEL</h3>
+<label>IQAMA: <input id="f_iq"></label>
+<label>Name: <input id="f_name"></label>
+<label>Camp: <input id="f_camp" placeholder="CP1 / CP2 / CP3"></label>
+<label>Company: <input id="f_company"></label>
+<label>Gender: <input id="f_gender"></label>
+<label>Nationality: <input id="f_nationality"></label>
+<label>Sponsor: <input id="f_sponsor"></label>
+<label>Room: <input id="f_room"></label>
+<br>
+<button onclick="addWorker()">Add Worker</button>
+<button onclick="deleteWorker()">Delete Worker</button>
+<h4>📤 Upload CSV</h4>
+<input type="file" id="csvFile">
+<button onclick="uploadCSV()">Upload CSV</button>
+<div id="msg" style="color:green;margin-top:8px;"></div>
+</div>
+
+<h2>🏢 Client / Company Summary</h2>
+<div id="clientSummary"></div>
+
+<h2>🏘️ Camp Summary</h2>
+<div id="campSummary"></div>
+
+<h2>👷 Worker Details</h2>
+<div id="workerTable"></div>
+
+<div class="footer">Made with ❤️ by Faizan Khan</div>
+
+<script>
+const WEB_APP_URL='https://script.google.com/macros/s/AKfycbyIjmcpXAOMaRguvMkkAJbNbIU5skOA-7G8yW901E1l-09d9wSNlWUBVFs-0hP5C3097g/exec';
+let isAdmin=false;
+
+function login(){
+  if(document.getElementById('adminPw').value==='1234'){
+    isAdmin=true;
+    document.getElementById('editor').classList.remove('hidden');
+    document.getElementById('loginBox').classList.add('hidden');
+    document.getElementById('adminBox').classList.remove('hidden');
+    loadData();
+  } else alert('❌ Wrong password');
+}
+
+function logout(){
+  isAdmin=false;
+  document.getElementById('editor').classList.add('hidden');
+  document.getElementById('loginBox').classList.remove('hidden');
+  document.getElementById('adminBox').classList.add('hidden');
+  loadData();
+}
+
+async function fetchData(action,payload={}){
+  const res=await fetch(WEB_APP_URL,{
+    method:'POST',
+    body: JSON.stringify({...payload, action}),
+    headers:{'Content-Type':'application/json'}
+  });
+  return await res.json();
+}
+
+async function loadData(){
+  const data=await fetchData('getData');
+  if(data.status==='success'){
+    renderWorkerTable(data.workers);
+    renderClientSummary(data.workers);
+    renderCampSummary(data.workers);
+  }
+}
+
+async function addWorker(){
+  const w={
+    iq:f_iq.value, name:f_name.value, camp:f_camp.value, company:f_company.value,
+    gender:f_gender.value, nationality:f_nationality.value, sponsor:f_sponsor.value, room:f_room.value
+  };
+  if(!w.iq||!w.name) return alert('IQAMA and Name required');
+  const res=await fetchData('addWorker', w);
+  if(res.status==='success'){alert('✅ Worker added'); loadData();}
+}
+
+async function deleteWorker(){
+  const iq=prompt('Enter IQAMA to delete:');
+  if(!iq) return;
+  const res=await fetchData('deleteWorker',{iq});
+  if(res.status==='success'){alert('🗑️ Worker deleted'); loadData();}
+  else alert('❌ Not found');
+}
+
+function renderWorkerTable(workers){
+  let html='<table><tr><th>#</th><th>IQAMA</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>';
+  workers.forEach((w,i)=>{
+    html+=`<tr><td>${i+1}</td><td>${w.iq}</td><td>${w.name}</td><td>${w.camp}</td><td>${w.company}</td><td>${w.gender}</td><td>${w.nationality}</td><td>${w.sponsor}</td><td>${w.room}</td></tr>`;
+  });
+  html+='</table>';
+  document.getElementById('workerTable').innerHTML=html;
+}
+
+function renderClientSummary(workers){
+  const camps=['CP1','CP2','CP3'];
+  let map={};
+  workers.forEach(w=>{
+    map[w.company]=map[w.company]||{};
+    map[w.company][w.camp]=(map[w.company][w.camp]||0)+1;
+  });
+  let html='<table><tr><th>Client / Company</th>';
+  camps.forEach(c=>html+=`<th>${c}</th>`);
+  html+='<th>Total</th></tr>';
+  let totalSum=0;
+  for(let comp in map){
+    let sum=0;
+    html+=`<tr><td>${comp}</td>`;
+    camps.forEach(c=>{
+      const val=map[comp][c]||0;
+      sum+=val;
+      html+=`<td>${val}</td>`;
+    });
+    html+=`<td>${sum}</td></tr>`;
+    totalSum+=sum;
+  }
+  html+=`<tr style="font-weight:bold;"><td>Total</td>`;
+  camps.forEach(c=>html+=`<td>-</td>`);
+  html+=`<td>${totalSum}</td></tr></table>`;
+  document.getElementById('clientSummary').innerHTML=html;
+}
+
+function renderCampSummary(workers){
+  const camps=['CP1','CP2','CP3'];
+  let html='<table><tr><th>Camp</th><th>Total Workers</th><th>Male</th><th>Female</th></tr>';
+  camps.forEach(c=>{
+    const w=workers.filter(x=>x.camp===c);
+    const male=w.filter(x=>x.gender.toLowerCase().startsWith('m')).length;
+    const female=w.filter(x=>x.gender.toLowerCase().startsWith('f')).length;
+    html+=`<tr><td>${c}</td><td>${w.length}</td><td>${male}</td><td>${female}</td></tr>`;
+  });
+  html+='</table>';
+  document.getElementById('campSummary').innerHTML=html;
+}
+
+function uploadCSV(){
+  const file=document.getElementById('csvFile').files[0];
+  if(!file) return alert('Select CSV');
+  const reader=new FileReader();
+  reader.onload=function(e){
+    fetchData('importCSV',{csv:e.target.result}).then(res=>{
+      if(res.status==='success'){alert('✅ CSV imported'); loadData();}
+      else alert('❌ Error');
+    });
+  };
+  reader.readAsText(file);
+}
+
+loadData();
+</script>
+
+</body>
+</html>
