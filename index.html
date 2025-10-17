@@ -1,157 +1,498 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Care-Pro Riyadh Accommodation</title>
-<style>
-body { font-family:"Poppins", Arial, sans-serif; margin:20px; background:linear-gradient(135deg,#cce5ff,#e6f2ff); color:#004085; }
-h1,h2,h3,h4{color:#004085;}
-h1{ text-align:center; font-size:28px; margin-bottom:15px;}
-table{border-collapse:collapse;width:100%;margin:15px 0;box-shadow:0 2px 6px rgba(0,0,0,0.1); background:#fff; border-radius:6px; overflow:hidden;}
-th,td{border:1px solid #ddd; padding:8px 10px; text-align:left; font-size:14px;}
-th{background:#004085;color:#fff;}
-tr:nth-child(even){background:#e6f2ff;}
-tr:hover{background:#d1e0ff;}
-.form{border:1px solid #ccc; padding:15px; background:#fefefe; border-radius:8px; margin-top:10px;}
-.form input, .form select{margin:5px; padding:6px 10px; border-radius:4px;}
-.form button{background:#004085; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; margin:5px;}
-.form button:hover{background:#0056b3;}
-.footer{text-align:center;font-size:13px;color:#555;margin-top:40px;}
-@media(max-width:768px){table,th,td{font-size:12px;} .form input,.form select,.form button{width:100%;margin-top:5px;}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Care-Pro Riyadh Accommodation</title>
+  <style>
+    /* GENERAL STYLES */
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      margin: 20px;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      color: #222;
+      animation: bgmove 10s ease-in-out infinite alternate;
+    }
+    @keyframes bgmove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    h1, h2, h3, h4 {
+      color: #004085;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: #004085;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    tr:hover {
+      background: #e2e6ea;
+    }
+    .form {
+      border: 1px solid #ccc;
+      padding: 15px;
+      background: #fefefe;
+      border-radius: 8px;
+      margin-top: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .form input {
+      margin: 5px;
+      padding: 6px 10px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .form button {
+      background: #004085;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .form button:hover {
+      background: #0056b3;
+    }
+    .hidden {
+      display: none;
+    }
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+      margin-top: 40px;
+      font-style: italic;
+    }
+    .footer span {
+      color: #004085;
+      font-weight: bold;
+    }
+    input[type=number] {
+      width: 80px;
+    }
+    .search-box {
+      background: #e9f2ff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #cce5ff;
+      margin-top: 10px;
+    }
+    select {
+      padding: 6px 10px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+    }
+    button {
+      transition: 0.3s;
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+    @media (max-width: 768px) {
+      table, th, td {
+        font-size: 12px;
+      }
+      .form input, select, button {
+        width: 100%;
+        margin-top: 5px;
+      }
+    }
+  </style>
 </head>
 <body>
-<h1>🏠 CARE-PRO RIYADH ACCOMMODATION</h1>
 
-<div>
-  <input type="password" id="adminPw" placeholder="Enter Admin Password">
-  <button onclick="login()">Login</button>
-  <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
-</div>
+  <h1>🏠 CARE-PRO RIYADH ACCOMMODATION</h1>
 
-<div id="editor" class="form" style="display:none;">
-<h4>🔧 ADMIN PANEL</h4>
-<label>IQAMA: <input id="f_iq"></label>
-<label>Name: <input id="f_name"></label>
-<label>Camp: <input id="f_camp"></label>
-<label>Company: <input id="f_company"></label>
-<label>Gender: <input id="f_gender"></label>
-<label>Nationality: <input id="f_nationality"></label>
-<label>Sponsor: <input id="f_sponsor"></label>
-<label>Room: <input id="f_room"></label><br>
-<button onclick="addWorker()">Add Worker</button>
-<button onclick="deleteWorker()">Delete Worker</button><br>
-<h4>📤 Import CSV</h4>
-<input type="file" id="csvFile" accept=".csv">
-<button onclick="importCSV()">Upload CSV</button>
-</div>
+  <div>
+    <span id="loginBox">
+      <input type="password" id="adminPw" placeholder="Enter Admin Password">
+      <button onclick="login()">Login</button>
+    </span>
+    <span id="adminBox" class="hidden">
+      <button onclick="logout()">Logout</button>
+    </span>
+  </div>
 
-<h2>🏢 Workers Table & Totals</h2>
-<div id="tableWrap"></div>
+  <!-- ADMIN PANEL -->
+  <div id="editor" class="form hidden">
+    <h4>🔧 ADMIN PANEL</h4>
 
-<h2>🏢 Client / Company Summary</h2>
-<div id="clientSummary"></div>
+    <label>IQAMA: <input id="f_iq"></label>
+    <label>Name: <input id="f_name"></label>
+    <label>Camp: <input id="f_camp" placeholder="CP 1 / CP 2 / CP 3"></label>
+    <label>Company: <input id="f_company"></label>
+    <label>Gender: <input id="f_gender"></label>
+    <label>Nationality: <input id="f_nationality"></label>
+    <label>Sponsor: <input id="f_sponsor"></label>
+    <label>Room No: <input id="f_room"></label>
+    <br>
+    <button onclick="addWorker()">Add Worker</button>
+    <button onclick="deleteWorkerPrompt()">Delete by IQAMA</button>
+    <div id="msg" style="color:green; margin-top:8px; font-weight:600;"></div>
 
-<h2>🏘️ Camp Summary</h2>
-<div id="campSummary"></div>
+    <h4>🏕️ Manage Camps</h4>
+    <input id="newCampName" placeholder="Enter Camp Name">
+    <button onclick="addNewCamp()">Add Camp</button>
+    <button onclick="deleteCamp()">Delete Camp</button>
 
-<div class="footer">Made with ❤️ by <span>Faizan Khan</span></div>
+    <h4>📤 Export / 📥 Import Workers</h4>
+    <button onclick="exportCSV()">Export Workers CSV</button><br><br>
+    <input type="file" id="csvFile" accept=".csv">
+    <button onclick="importCSV()">Import CSV</button>
+    <p style="font-size:12px; color:gray;">CSV Format: iq,name,camp,company,gender,nationality,sponsor,room</p>
+  </div>
 
-<script>
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz2hWGRihuV9NBcIN7g0VYWG_M-Im-V7Gf_-rKJfZ6Na6Uks70kqAE8Q1EUpG3cdcMnNg/exec';
+  <!-- CAMP SELECTION -->
+  <h2>🏕️ Select Camp</h2>
+  <div style="margin:10px 0;">
+    <label>Camp:
+      <select id="campSelect" onchange="showSelectedCamp()"></select>
+    </label>
+    <button onclick="showSelectedCamp()">Show Camp</button>
+  </div>
 
-let isAdmin=false;
+  <!-- SEARCH -->
+  <div class="search-box">
+    <h3>🔍 Search Worker by IQAMA</h3>
+    <input type="text" id="searchIqama" placeholder="Enter IQAMA Number">
+    <button onclick="searchByIqama()">Search</button>
+    <div id="searchResult" style="margin-top:10px;"></div>
+  </div>
 
-function login(){
-  if(document.getElementById('adminPw').value==='1234'){
-    isAdmin=true; document.getElementById('editor').style.display='block';
-    document.getElementById('logoutBtn').style.display='inline-block';
-    fetchData();
-  } else alert('❌ Wrong password!');
-}
+  <!-- SUMMARY SECTIONS -->
+  <h2>🏢 Client / Company Summary</h2>
+  <div id="clientSummary"></div>
 
-function logout(){ isAdmin=false; document.getElementById('editor').style.display='none'; document.getElementById('logoutBtn').style.display='none'; }
+  <h2>🏘️ Camp Summary</h2>
+  <div id="campSummary"></div>
 
-function fetchData(){
-  fetch(WEB_APP_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'getData'})})
-  .then(res=>res.json())
-  .then(resp=>{
-    if(resp.status==='success'){
-      renderTable(resp.workers);
-      renderClientSummary(resp.workers);
-      renderCampSummary(resp.workers);
-    } else alert('❌ '+resp.message);
-  }).catch(err=>alert('Fetch error: '+err));
-}
+  <h2>👷 Worker Details</h2>
+  <div id="tableWrap"></div>
 
-function addWorker(){
-  const data={action:'addWorker',
-    iq:f_iq.value.trim(), name:f_name.value.trim(), camp:f_camp.value.trim(),
-    company:f_company.value.trim(), gender:f_gender.value.trim(),
-    nationality:f_nationality.value.trim(), sponsor:f_sponsor.value.trim(),
-    room:f_room.value.trim()
-  };
-  if(!data.iq||!data.name){alert('IQAMA and Name required'); return;}
-  fetch(WEB_APP_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)})
-  .then(r=>r.json()).then(resp=>{if(resp.status==='success'){alert('✅ Worker added'); fetchData();}else alert(resp.message);})
-  .catch(err=>alert('Fetch error: '+err));
-}
+  <div class="footer">Made with ❤️ by <span>Faizan Khan</span></div>
 
-function deleteWorker(){
-  const iq=prompt('Enter IQAMA to delete:'); if(!iq) return;
-  fetch(WEB_APP_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'deleteWorker',iq})})
-  .then(r=>r.json()).then(resp=>{if(resp.status==='success'){alert('✅ Worker deleted'); fetchData();}else alert('❌ Worker not found');})
-  .catch(err=>alert('Fetch error: '+err));
-}
+  <script>
+    const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbxPn3-XlTPdOBJ8OtSDGbSh8HUl1vq9JiHlbdRpHWoTXCuK4wyJJIWNlHGd7konmIGR/exec';
 
-function importCSV(){
-  const file=document.getElementById('csvFile').files[0]; if(!file){alert('Select CSV'); return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    fetch(WEB_APP_URL,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'importCSV',csv:e.target.result})})
-    .then(r=>r.json()).then(resp=>{if(resp.status==='success'){alert('✅ CSV imported'); fetchData();}else alert(resp.message);})
-    .catch(err=>alert('Fetch error: '+err));
-  }; reader.readAsText(file);
-}
+    let isAdmin = false;
+    let workers = [];
+    let camps = [];
+    let campData = {};
 
-function renderTable(workers){
-  let html='<table><tr><th>#</th><th>IQAMA</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>';
-  workers.forEach((w,i)=>{html+='<tr><td>'+(i+1)+'</td><td>'+w.iq+'</td><td>'+w.name+'</td><td>'+w.camp+'</td><td>'+w.company+'</td><td>'+w.gender+'</td><td>'+w.nationality+'</td><td>'+w.sponsor+'</td><td>'+w.room+'</td></tr>';});
-  html+='</table>'; document.getElementById('tableWrap').innerHTML=html;
-}
+    async function loadData() {
+      try {
+        const resp = await fetch(SHEET_API_URL);
+        workers = await resp.json();
+        // After loading workers, derive camps & campData if not set
+        camps = [...new Set(workers.map(w => w.camp))];
+        camps.forEach(c => {
+          if (!campData[c]) campData[c] = { beds:0, rooms:0 };
+        });
+        renderAll();
+      } catch (err) {
+        console.error("Failed to load from sheet:", err);
+        // fallback localStorage
+        workers = JSON.parse(localStorage.getItem('workers')||'[]');
+        camps = JSON.parse(localStorage.getItem('camps')||'[]');
+        campData = JSON.parse(localStorage.getItem('campData')||'{}');
+        renderAll();
+      }
+    }
 
-function renderClientSummary(workers){
-  let summary={};
-  workers.forEach(w=>{
-    if(!summary[w.company]) summary[w.company]={'CP 1':0,'CP 2':0,'CP 3':0};
-    if(w.camp==='CP 1') summary[w.company]['CP 1']++;
-    if(w.camp==='CP 2') summary[w.company]['CP 2']++;
-    if(w.camp==='CP 3') summary[w.company]['CP 3']++;
-  });
-  let html='<table><tr><th>Client / Company</th><th>CP 1</th><th>CP 2</th><th>CP 3</th><th>Total</th></tr>';
-  let totals={'CP 1':0,'CP 2':0,'CP 3':0,'Total':0};
-  for(let c in summary){
-    let t=summary[c]['CP 1']+summary[c]['CP 2']+summary[c]['CP 3'];
-    html+='<tr><td>'+c+'</td><td>'+summary[c]['CP 1']+'</td><td>'+summary[c]['CP 2']+'</td><td>'+summary[c]['CP 3']+'</td><td>'+t+'</td></tr>';
-    totals['CP 1']+=summary[c]['CP 1']; totals['CP 2']+=summary[c]['CP 2']; totals['CP 3']+=summary[c]['CP 3']; totals['Total']+=t;
-  }
-  html+='<tr><th>TOTAL</th><th>'+totals['CP 1']+'</th><th>'+totals['CP 2']+'</th><th>'+totals['CP 3']+'</th><th>'+totals['Total']+'</th></tr></table>';
-  document.getElementById('clientSummary').innerHTML=html;
-}
+    async function saveData() {
+      try {
+        await fetch(SHEET_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(workers)
+        });
+      } catch (err) {
+        console.error("Failed to save to sheet:", err);
+        // fallback localStorage
+        localStorage.setItem('workers', JSON.stringify(workers));
+        localStorage.setItem('camps', JSON.stringify(camps));
+        localStorage.setItem('campData', JSON.stringify(campData));
+      }
+    }
 
-function renderCampSummary(workers){
-  let camps={'CP 1':0,'CP 2':0,'CP 3':0};
-  workers.forEach(w=>{if(camps[w.camp]!==undefined) camps[w.camp]++;});
-  let html='<table><tr><th>Camp</th><th>Workers Count</th></tr>';
-  for(let c in camps) html+='<tr><td>'+c+'</td><td>'+camps[c]+'</td></tr>';
-  html+='<tr><th>TOTAL</th><th>'+(camps['CP 1']+camps['CP 2']+camps['CP 3'])+'</th></tr></table>';
-  document.getElementById('campSummary').innerHTML=html;
-}
+    function login() {
+      const pw = document.getElementById('adminPw').value;
+      if (pw === '1234') {
+        isAdmin = true;
+        document.getElementById('editor').classList.remove('hidden');
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('adminBox').classList.remove('hidden');
+        document.getElementById('msg').innerText = 'Admin mode enabled';
+        renderAll();
+      } else {
+        alert('❌ Wrong password!');
+      }
+    }
 
-// Auto fetch every 30s
-setInterval(()=>{ if(isAdmin) fetchData(); },30000);
+    function logout() {
+      isAdmin = false;
+      document.getElementById('editor').classList.add('hidden');
+      document.getElementById('loginBox').classList.remove('hidden');
+      document.getElementById('adminBox').classList.add('hidden');
+      renderAll();
+    }
 
-</script>
+    function addWorker() {
+      const w = {
+        iq: f_iq.value.trim(),
+        name: f_name.value.trim(),
+        camp: f_camp.value.trim(),
+        company: f_company.value.trim(),
+        gender: f_gender.value.trim(),
+        nationality: f_nationality.value.trim(),
+        sponsor: f_sponsor.value.trim(),
+        room: f_room.value.trim()
+      };
+      if (!w.iq || !w.name) {
+        alert("IQAMA and Name required!");
+        return;
+      }
+      workers.push(w);
+      if (!camps.includes(w.camp)) camps.push(w.camp);
+      saveData();
+      renderAll();
+      msg.innerText = "✅ Worker added!";
+    }
+
+    function deleteWorkerPrompt() {
+      const iq = prompt("Enter IQAMA to delete:");
+      if (!iq) return;
+      const idx = workers.findIndex(w => w.iq === iq);
+      if (idx >= 0) {
+        workers.splice(idx, 1);
+        saveData();
+        renderAll();
+        alert("🗑️ Worker deleted!");
+      } else {
+        alert("❌ IQAMA not found!");
+      }
+    }
+
+    function addNewCamp() {
+      const name = newCampName.value.trim();
+      if (name && !camps.includes(name)) {
+        camps.push(name);
+        campData[name] = { beds:0, rooms:0 };
+        saveData();
+        updateCampDropdown();
+        alert(`✅ Camp "${name}" added.`);
+        newCampName.value = '';
+      } else {
+        alert('⚠️ Invalid or duplicate camp name.');
+      }
+    }
+
+    function deleteCamp() {
+      const campToDelete = newCampName.value.trim();
+      if (!campToDelete) {
+        alert("Enter camp name to delete.");
+        return;
+      }
+      if (!camps.includes(campToDelete)) {
+        alert("Camp not found.");
+        return;
+      }
+      if (!confirm(`Delete camp "${campToDelete}" and its workers?`)) return;
+      camps = camps.filter(c => c !== campToDelete);
+      delete campData[campToDelete];
+      workers = workers.filter(w => w.camp !== campToDelete);
+      saveData();
+      updateCampDropdown();
+      renderAll();
+      alert(`🗑️ Camp "${campToDelete}" deleted.`);
+    }
+
+    function updateCampDropdown() {
+      const sel = campSelect;
+      sel.innerHTML = '';
+      camps.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.innerText = c;
+        sel.appendChild(opt);
+      });
+    }
+
+    function showSelectedCamp() {
+      renderTable(campSelect.value);
+    }
+
+    function renderTable(campFilter = '') {
+      let html = `<table><tr><th>#</th><th>IQAMA</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>`;
+      let count = 1;
+      workers.forEach(w => {
+        if (!campFilter || w.camp === campFilter) {
+          html += `<tr>
+            <td>${count++}</td>
+            <td>${w.iq}</td>
+            <td>${w.name}</td>
+            <td>${w.camp}</td>
+            <td>${w.company}</td>
+            <td>${w.gender}</td>
+            <td>${w.nationality}</td>
+            <td>${w.sponsor}</td>
+            <td>${w.room}</td>
+          </tr>`;
+        }
+      });
+      html += `</table>`;
+      tableWrap.innerHTML = html;
+    }
+
+    function searchByIqama() {
+      const iq = searchIqama.value.trim();
+      if (!iq) {
+        searchResult.innerHTML = "<p style='color:red;'>Please enter IQAMA number</p>";
+        return;
+      }
+      const w = workers.find(x => x.iq === iq);
+      if (!w) {
+        searchResult.innerHTML = "<p style='color:red;'>No worker found</p>";
+      } else {
+        searchResult.innerHTML = `<table><tr><th>IQAMA</th><th>Name</th><th>Camp</th><th>Company</th><th>Gender</th><th>Nationality</th><th>Sponsor</th><th>Room</th></tr>
+          <tr><td>${w.iq}</td><td>${w.name}</td><td>${w.camp}</td><td>${w.company}</td><td>${w.gender}</td><td>${w.nationality}</td><td>${w.sponsor}</td><td>${w.room}</td></tr></table>`;
+      }
+    }
+
+    function renderClientSummary() {
+      let map = {};
+      let total = 0;
+      workers.forEach(w => {
+        if (!map[w.company]) map[w.company] = {};
+        map[w.company][w.camp] = (map[w.company][w.camp] || 0) + 1;
+      });
+      let html = '<table><tr><th>Company</th>';
+      camps.forEach(c => html += `<th>${c}</th>`);
+      html += '<th>Total</th></tr>';
+      for (const comp in map) {
+        let sum = 0;
+        html += `<tr><td>${comp}</td>`;
+        camps.forEach(c => {
+          const val = map[comp][c] || 0;
+          sum += val;
+          html += `<td>${val}</td>`;
+        });
+        html += `<td>${sum}</td></tr>`;
+        total += sum;
+      }
+      html += `<tr style="font-weight:bold;background:#cfe2ff;"><td>Total</td><td colspan="${camps.length}"></td><td>${total}</td></tr></table>`;
+      clientSummary.innerHTML = html;
+    }
+
+    function renderCampSummary() {
+      let html = '<table><tr><th>Camp</th><th>Rooms</th><th>Total Beds</th><th>Available Beds</th><th>Male</th><th>Female</th><th>Total</th></tr>';
+      let totalWorkers = 0;
+      camps.forEach(c => {
+        const total = workers.filter(w => w.camp === c).length;
+        const male = workers.filter(w => w.camp === c && w.gender.toLowerCase().startsWith('m')).length;
+        const female = workers.filter(w => w.camp === c && w.gender.toLowerCase().startsWith('f')).length;
+        const data = campData[c] || { beds:0, rooms:0 };
+        const avail = Math.max(data.beds - total, 0);
+        totalWorkers += total;
+        html += `<tr>
+          <td>${c}</td>
+          <td>${isAdmin ? `<input type='number' value='${data.rooms}' onchange='updateCampRooms("${c}",this.value)'>` : data.rooms}</td>
+          <td>${isAdmin ? `<input type='number' value='${data.beds}' onchange='updateCampBeds("${c}",this.value)'>` : data.beds}</td>
+          <td>${avail}</td><td>${male}</td><td>${female}</td><td>${total}</td>
+        </tr>`;
+      });
+      html += `<tr style="font-weight:bold;background:#cfe2ff;"><td colspan="6">Total Workers</td><td>${totalWorkers}</td></tr></table>`;
+      campSummary.innerHTML = html;
+    }
+
+    function updateCampBeds(c, v) {
+      campData[c] = campData[c] || { beds: 0, rooms: 0 };
+      campData[c].beds = parseInt(v) || 0;
+      saveData();
+      renderCampSummary();
+    }
+
+    function updateCampRooms(c, v) {
+      campData[c] = campData[c] || { beds: 0, rooms: 0 };
+      campData[c].rooms = parseInt(v) || 0;
+      saveData();
+      renderCampSummary();
+    }
+
+    function exportCSV() {
+      const h = ['iq','name','camp','company','gender','nationality','sponsor','room'];
+      let csv = h.join(',') + '\n';
+      workers.forEach(w => {
+        csv += h.map(k => `"${w[k] || ''}"`).join(',') + '\n';
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'carepro_workers.csv';
+      link.click();
+    }
+
+    function importCSV() {
+      const file = csvFile.files[0];
+      if (!file) {
+        alert("Select a CSV file.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        const lines = e.target.result.split('\n').filter(l => l.trim());
+        const h = lines[0].split(',');
+        const arr = lines.slice(1).map(l => {
+          const v = l.split(',');
+          const obj = {};
+          h.forEach((x, i) => obj[x.trim()] = (v[i] || '').replace(/"/g, '').trim());
+          return obj;
+        });
+        if (confirm(`Import ${arr.length} workers?`)) {
+          workers = workers.concat(arr);
+          saveData();
+          renderAll();
+          alert('Imported successfully!');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderAll() {
+      updateCampDropdown();
+      renderTable();
+      renderClientSummary();
+      renderCampSummary();
+    }
+
+    // Initial load
+    loadData();
+  </script>
 </body>
 </html>
